@@ -13,9 +13,10 @@ const UpdateForm = (props) => {
     const { id } = useParams();
     const history = useHistory();
     const [movie, setMovie] = useState(initialMovie);
+  
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/movies/${id}`)
+        axios.get(`http://localhost:5000/api/movies/${id}`)
         .then(res => {
             setMovie(res.data);
         })
@@ -31,9 +32,11 @@ const UpdateForm = (props) => {
     }
 
     const submit = (e) => {
-        e.prevent.default();
-        axios.put(`http://localhost:5000/movies/${id}`, movie)
+        // e.preventDefault();
+        console.log('response')
+        axios.put(`http://localhost:5000/api/movies/${id}`, movie)
         .then(response => {
+            history.push('/')
             const newMovieArr = props.movieList.map(each => {
                 if (each.id = response.data.id){
                     return (each = response.data);
@@ -42,16 +45,19 @@ const UpdateForm = (props) => {
                     return each
                 }
             })
-            props.setMovies(newMovieArr);
-            history.push('/')
+            props.setMovie(newMovieArr);
+             
         })
         .catch(error => console.error (error.message))
+        
+        history.push('/')
+       window.location.reload()
     }
 
     return (
         <div>
             <h4>Update Movie</h4>
-            <form onSubmit={submit}>
+            <form onSubmit={(e)=>submit(e)}>
                 <input
                     type='text'
                     name='title'
@@ -73,7 +79,7 @@ const UpdateForm = (props) => {
                     placeholder='Metascore'
                     value={movie.metascore}
                 />
-                <button>UPDATE</button>
+                <button type="submit" onClick={(e) => submit(e)}>UPDATE</button>
             </form>
         </div>
     )
